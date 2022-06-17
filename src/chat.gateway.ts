@@ -29,7 +29,20 @@ export class ChatGateway {
   handleOffer(
     @MessageBody('destination') destinationSocketId: string,
     @MessageBody('offer') offer: RTCSessionDescriptionInit,
+    @ConnectedSocket() connectedSocket: Socket,
   ) {
-    this.server.to(destinationSocketId).emit('offer', offer);
+    this.server.to(destinationSocketId).emit('offer', {
+      from: connectedSocket.id,
+      offer,
+    });
+  }
+
+  // @todo: add typing
+  @SubscribeMessage('ice-candidate')
+  handleIceCandidate(
+    @MessageBody('destination') destinationSocketId: string,
+    @MessageBody('candidate') candidate,
+  ) {
+    this.server.to(destinationSocketId).emit('ice-candidate', candidate);
   }
 }
