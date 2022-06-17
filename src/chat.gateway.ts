@@ -37,6 +37,14 @@ export class ChatGateway {
     });
   }
 
+  @SubscribeMessage('answer')
+  handleAnswer(
+    @MessageBody('destination') destinationSocketId: string,
+    @MessageBody('answer') answer: RTCSessionDescriptionInit,
+  ) {
+    this.server.to(destinationSocketId).emit('answer', answer);
+  }
+
   // @todo: add typing
   @SubscribeMessage('ice-candidate')
   handleIceCandidate(
