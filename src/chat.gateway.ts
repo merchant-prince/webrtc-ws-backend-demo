@@ -1,5 +1,6 @@
 import {
   ConnectedSocket,
+  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -22,5 +23,13 @@ export class ChatGateway {
         ...(await this.server.allSockets()),
       ]);
     });
+  }
+
+  @SubscribeMessage('offer')
+  handleOffer(
+    @MessageBody('destination') destinationSocketId: string,
+    @MessageBody('offer') offer: RTCSessionDescriptionInit,
+  ) {
+    this.server.to(destinationSocketId).emit('offer', offer);
   }
 }
